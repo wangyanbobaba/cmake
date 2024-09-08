@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/wang/wybmoblie/cmake/cmake_1/Step2/MathFunctions/MathFunctions.cxx
+MathFunctions.h
+/home/wang/wybmoblie/cmake/cmake_1/Step2/MathFunctions/MathFunctions.h
+cmath
+-
+mysqrt.h
+/home/wang/wybmoblie/cmake/cmake_1/Step2/MathFunctions/mysqrt.h
+mysqrt.h
+/home/wang/wybmoblie/cmake/cmake_1/Step2/MathFunctions/mysqrt.h
+
+/home/wang/wybmoblie/cmake/cmake_1/Step2/MathFunctions/MathFunctions.h
+
+/home/wang/wybmoblie/cmake/cmake_1/Step2/MathFunctions/mysqrt.h
+
