@@ -47,7 +47,26 @@
         ```
         your_ros_project_name: error while loading shared libraries: libth_itof_b_shared.so: cannot open shared object file: No such file or directory
         ```
-        3.1.1
+        解决：
+        1. 首先要知道运行时库搜索机制：
+            在Linux系统中，动态链接器加载程序时，会按照以下顺序搜索所需的共享库（.so文件）：
+                1.
+                ​​RPATH​​ (编译时嵌入到二进制文件中的路径)
+                2.
+                ​​LD_LIBRARY_PATH​​ (环境变量中的路径)
+                3.
+                ​​RUNPATH​​ (同样编译时嵌入)
+                4.
+                ​​/etc/ld.so.conf​​ 中配置的缓存路径
+                5.
+                系统默认路径（如 /lib, /usr/lib）
+                通过设置 CMAKE_INSTALL_RPATH，你直接影响了搜索的​​最高优先级路径​​，确保了程序在安装后能优先从你指定的位置加载库。
+        2. 确认缺少哪里动态库
+            ```
+            ldd /root/taihe_bangson/work_space/install/your_ros_project_name/lib/your_ros_project_name/your_ros_project_name
+            ```
+            
+        
 
 常用cmake函数（按照使用频率排顺序）：
 cmakelists必用函数：
