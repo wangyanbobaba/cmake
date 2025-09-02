@@ -42,13 +42,22 @@
         -D CMAKE_CXX_COMPILER=g++-10：
         这个参数设置了CMake变量CMAKE_CXX_COMPILER，指定了项目将使用的C++编译器。这里指定的是g++-10，意味着CMake将使用g++编译器的版本10来编译C++代码。
 
-    3.2 编译没问题，但是运行时找不到动态库
+    3.2 编译没问题，动态库存在,但是运行时找不到动态库,
         报错类似于
         ```
-        your_ros_project_name: error while loading shared libraries: libth_itof_b_shared.so: cannot open shared object file: No such file or directory
+        root@localhost:~/taihe_bangson/work_space# ros2 run your_ros_project_name your_ros_project_name 
+        /root/taihe_bangson/work_space/install/your_ros_project_name/lib/your_ros_project_name/your_ros_project_name: error while loading shared libraries: libth_itof_b_shared.so: cannot open shared object file: No such file or directory
         ```
         解决：
-        1. 首先要知道运行时库搜索机制：
+        1. 确认问题：确认动态库确实存在，但是运行时连接不到
+             ```
+            root@localhost:~/taihe_bangson/work_space# ldd /root/taihe_bangson/work_space/install/your_ros_project_name/lib/your_ros_project_name/your_ros_project_name
+            linux-vdso.so.1 (0x0000007fa4592000)
+            libth_itof_b_shared.so => not found
+            libglog.so.1 => /usr/local/lib/libglog.so.1 (0x0000007fa4460000)
+            librclcpp.so => /opt/ros/foxy/lib/librclcpp.so (0x0000007fa4298000)
+
+        2. 首先要知道运行时库搜索机制：
             在Linux系统中，动态链接器加载程序时，会按照以下顺序搜索所需的共享库（.so文件）：
                 1.
                 ​​RPATH​​ (编译时嵌入到二进制文件中的路径)
@@ -61,10 +70,28 @@
                 5.
                 系统默认路径（如 /lib, /usr/lib）
                 通过设置 CMAKE_INSTALL_RPATH，你直接影响了搜索的​​最高优先级路径​​，确保了程序在安装后能优先从你指定的位置加载库。
-        2. 确认缺少哪里动态库
+        3.解决方法：
+            (1)临时解决：因为知道动态库路径，直接在终端使用第二种方法，添加环境变量中的路径
             ```
-            ldd /root/taihe_bangson/work_space/install/your_ros_project_name/lib/your_ros_project_name/your_ros_project_name
+            export LD_LIBRARY_PATH=/root/taihe_bangson/work_space/your_ros_project_name/SDK/lib:$LD_LIBRARY_PATH
             ```
+            (2)cmake解决（第一种方法）：
+            ```
+            # --- RPATH 配置 ---[6,8](@ref)
+            set(CMAKE_SKIP_BUILD_RPATH FALSE)
+            set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+            set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE) # 控制安装后程序的寻库行为。
+            # 使用 $ORIGIN 相对路径，提高可移植性[6,7](@ref)
+            set(CMAKE_INSTALL_RPATH "$ORIGIN;$ORIGIN/../lib/${PROJECT_NAME}") # 设置寻库路径：$ORIGIN表示与可执行文件同目录，分号用于间隔多个库路径，“$ORIGIN/../lib/${PROJECT_NAME}”表示二进制文件所在目录的​​上一级目录​​下的 lib/项目名子目录
+            ```
+            ```
+            确认一下：
+                root@localhost:~/taihe_bangson/work_space# ldd /root/taihe_bangson/work_space/install/your_ros_project_name/lib/your_ros_project_name/your_ros_project_name
+                linux-vdso.so.1 (0x0000007fb268d000)
+                libth_itof_b_shared.so => /root/taihe_bangson/work_space/install/your_ros_project_name/lib/your_ros_project_name/libth_itof_b_shared.so (0x0000007fb2551000)
+            ```
+
+
             
         
 
