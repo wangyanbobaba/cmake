@@ -41,7 +41,14 @@
         参数
         -D CMAKE_CXX_COMPILER=g++-10：
         这个参数设置了CMake变量CMAKE_CXX_COMPILER，指定了项目将使用的C++编译器。这里指定的是g++-10，意味着CMake将使用g++编译器的版本10来编译C++代码。
-        
+
+    3.2 编译没问题，但是运行时找不到动态库
+        报错类似于
+        ```
+        your_ros_project_name: error while loading shared libraries: libth_itof_b_shared.so: cannot open shared object file: No such file or directory
+        ```
+        3.1.1
+
 常用cmake函数（按照使用频率排顺序）：
 cmakelists必用函数：
-1. 
+1.
